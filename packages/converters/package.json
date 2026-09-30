@@ -12,5 +12,10 @@
   "devDependencies": {
     "typescript": "^5.6.3",
     "vitest": "^2.1.5"
+  },
+  "dependencies": {
+    "@dsvault/schema": "workspace:*",
+    "@dsvault/a11y": "workspace:*",
+    "json5": "^2.2.3"
   }
 }

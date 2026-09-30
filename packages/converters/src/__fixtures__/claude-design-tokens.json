@@ -1,0 +1,75 @@
+{
+  "name": "Jainil Portfolio",
+  "version": 1,
+  "color": {
+    "themes": [
+      { "id": "light", "name": "Light" },
+      { "id": "dark", "name": "Dark" }
+    ],
+    "tokens": [
+      { "name": "paper", "value": { "light": "#f5f6f3", "dark": "#141715" }, "usage": "Page background. A grey pulled slightly toward forest, never pure white or cream." },
+      { "name": "surface", "value": { "light": "#eceee9", "dark": "#1c201e" }, "usage": "The one raised fill: the phone screen, app icon tiles, inline code. Set apart from paper by a line border, not a shadow." },
+      { "name": "line", "value": { "light": "#d3d7d0", "dark": "#2e3431" }, "usage": "Hairlines, dividers and decorative outlines. Too faint for control borders; use line-strong there." },
+      { "name": "line-strong", "value": { "light": "#7c837d", "dark": "#6b736d" }, "usage": "Borders on inputs and controls, the phone bezel outline, inactive page dots. At least 3:1 on paper and surface in both themes." },
+      { "name": "graphite", "value": { "light": "#1f2321", "dark": "#e6e9e4" }, "usage": "Primary text and icons on paper, surface and forest-tint." },
+      { "name": "graphite-muted", "value": { "light": "#5a615c", "dark": "#9ba39d" }, "usage": "Secondary text, captions, mono labels, on paper and surface." },
+      { "name": "forest", "value": { "light": "#2f5d46", "dark": "#7fb394" }, "usage": "The brand color. Links, primary actions, the active page dot, focus rings. As text on paper, surface and forest-tint." },
+      { "name": "on-forest", "value": { "light": "#f5f6f3", "dark": "#141715" }, "usage": "Text and icons on a forest fill." },
+      { "name": "forest-tint", "value": { "light": "#dce6df", "dark": "#1f3128" }, "usage": "Quiet tinted fields: selected rows, the onboarding backdrop, a highlighted app tile." },
+      { "name": "rust", "value": { "light": "#b4532a", "dark": "#d9774c" }, "usage": "The accent. Used once per screen at most: the wiggle-invite badge, a 'new' marker, a single emphasized word. As text only on paper; on surface use it for marks, not words." }
+    ]
+  },
+  "type": {
+    "fonts": [],
+    "families": {
+      "sans": "Figtree, ui-sans-serif, system-ui, sans-serif",
+      "mono": "\"Geist Mono\", ui-monospace, SFMono-Regular, Menlo, monospace"
+    },
+    "groups": [
+      {
+        "name": "Figtree",
+        "family": "sans",
+        "styles": [
+          { "name": "display", "fontSize": "56px", "lineHeight": "56px", "fontWeight": 600, "letterSpacing": "-0.025em", "sample": "I design and build things for screens.", "usage": "The hero intro line only. Drop to 40px below 768px." },
+          { "name": "title", "fontSize": "32px", "lineHeight": "38px", "fontWeight": 600, "letterSpacing": "-0.015em", "sample": "Projects", "usage": "Page titles and the in-phone app header." },
+          { "name": "heading", "fontSize": "20px", "lineHeight": "28px", "fontWeight": 600, "sample": "Where I'm from", "usage": "Section headings and onboarding slide titles." },
+          { "name": "body", "fontSize": "17px", "lineHeight": "28px", "fontWeight": 400, "sample": "I grew up between two cities and learned to read both.", "usage": "Running text. Keep lines near 65 characters." },
+          { "name": "body-sm", "fontSize": "15px", "lineHeight": "24px", "fontWeight": 400, "sample": "Tap an app to open it.", "usage": "Text inside the phone, captions under images." },
+          { "name": "icon-label", "fontSize": "12px", "lineHeight": "16px", "fontWeight": 500, "sample": "Resume", "usage": "The label under each app icon on the home grid." }
+        ]
+      },
+      {
+        "name": "Geist Mono",
+        "family": "mono",
+        "styles": [
+          { "name": "label", "fontSize": "12px", "lineHeight": "16px", "fontWeight": 500, "letterSpacing": "0.06em", "sample": "2021 — 2024", "usage": "Uppercase metadata: years, places, roles, file-style tags. Never for sentences." },
+          { "name": "mono", "fontSize": "14px", "lineHeight": "20px", "fontWeight": 400, "sample": "status: available", "usage": "Inline code, the phone status bar clock, numeric values that line up." }
+        ]
+      }
+    ]
+  },
+  "spacing": {
+    "tokens": [
+      { "name": "space-1", "value": "4px", "usage": "Icon to label, dot to dot." },
+      { "name": "space-2", "value": "8px", "usage": "Tight stacks: label over value, bezel thickness." },
+      { "name": "space-4", "value": "16px", "usage": "Default gap; the mobile side gutter; app grid gap on mobile." },
+      { "name": "space-6", "value": "24px", "usage": "Padding inside the phone screen; app grid gap on desktop." },
+      { "name": "space-12", "value": "48px", "usage": "Between sections within a page; desktop side gutter." },
+      { "name": "space-24", "value": "96px", "usage": "Between major page sections; top padding above the hero intro." }
+    ]
+  },
+  "radius": {
+    "tokens": [
+      { "name": "radius-sm", "value": "6px", "usage": "Buttons, inputs, tags, inline code." },
+      { "name": "radius-icon", "value": "14px", "usage": "App icon tiles at 56px. Scale with the tile: 25% of its side." },
+      { "name": "radius-screen", "value": "36px", "usage": "The phone screen. Always radius-device minus the bezel (space-2)." },
+      { "name": "radius-device", "value": "44px", "usage": "The phone body. Not used on anything else." }
+    ]
+  },
+  "stroke": {
+    "tokens": [
+      { "name": "stroke-hairline", "value": "1px", "usage": "Every border and divider." },
+      { "name": "stroke-focus", "value": "2px", "usage": "Focus ring width, drawn in forest with a 2px offset." }
+    ]
+  }
+}

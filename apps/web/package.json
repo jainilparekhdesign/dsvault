@@ -7,23 +7,32 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:generate": "dotenv -e .env.local -- drizzle-kit generate",
+    "db:migrate": "dotenv -e .env.local -- drizzle-kit migrate",
+    "db:studio": "dotenv -e .env.local -- drizzle-kit studio"
   },
   "dependencies": {
     "@dsvault/a11y": "workspace:*",
     "@dsvault/converters": "workspace:*",
     "@dsvault/schema": "workspace:*",
+    "@neondatabase/serverless": "^0.10.4",
+    "drizzle-orm": "^0.36.4",
     "geist": "^1.3.1",
+    "nanoid": "^5.0.9",
     "next": "14.2.18",
     "next-auth": "5.0.0-beta.25",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
+    "dotenv-cli": "^7.4.4",
+    "drizzle-kit": "^0.28.1",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.6.3"
