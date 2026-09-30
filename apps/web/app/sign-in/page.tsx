@@ -7,7 +7,7 @@ export default function SignInPage({ searchParams }: { searchParams: { error?: s
       <h1 className="mt-2 text-2xl font-semibold">Sign in</h1>
       {searchParams.error && (
         <p role="alert" className="mt-4 border border-line-strong px-3 py-2 text-sm text-rust">
-          That account doesn’t have access.
+          That account doesn’t have access. Ask the owner of a design system to share it with this email.
         </p>
       )}
       <form

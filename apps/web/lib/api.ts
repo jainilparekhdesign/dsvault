@@ -16,6 +16,7 @@ export function withOwner<P = Record<string, string>>(fn: Handler<P>) {
     } catch (err) {
       if (err instanceof ZodError) return NextResponse.json({ error: 'That content isn’t valid.', issues: err.issues.slice(0, 5) }, { status: 400 });
       if (err instanceof Error && err.name === 'ImportError') return NextResponse.json({ error: err.message }, { status: 400 });
+      if (err instanceof Error && err.name === 'Forbidden') return NextResponse.json({ error: err.message }, { status: 403 });
       console.error(err);
       return NextResponse.json({ error: 'Something went wrong on the server.' }, { status: 500 });
     }

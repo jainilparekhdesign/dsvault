@@ -5,10 +5,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { SaveStatus, useSystem } from './SystemProvider';
+import { SharingPanel } from './SharingPanel';
 import { Block } from './ui';
 
 export function Overview() {
-  const { id, content, update } = useSystem();
+  const { id, content, update, role } = useSystem();
   const router = useRouter();
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState('');
@@ -63,7 +64,9 @@ export function Overview() {
           onChange={(e) => update((d) => { d.description = e.target.value; })} />
       </Block>
 
-      <Block title="Delete" intro="Removes this system and its versions for good.">
+      <SharingPanel />
+
+      {role === 'owner' && <Block title="Delete" intro="Removes this system and its versions for good.">
         <div className="actions">
           {!confirming ? (
             <button type="button" className="btn btn-danger" onClick={() => setConfirming(true)}>Delete system</button>
@@ -75,7 +78,7 @@ export function Overview() {
           )}
           {error && <span className="note text-rust" role="alert">{error}</span>}
         </div>
-      </Block>
+      </Block>}
     </>
   );
 }

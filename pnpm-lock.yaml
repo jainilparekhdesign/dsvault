@@ -45,6 +45,9 @@ importers:
       '@dsvault/converters':
         specifier: workspace:*
         version: link:../../packages/converters
+      '@dsvault/mcp':
+        specifier: workspace:*
+        version: link:../../packages/mcp
       '@dsvault/schema':
         specifier: workspace:*
         version: link:../../packages/schema
@@ -156,6 +159,25 @@ importers:
       style-dictionary:
         specifier: ^5.0.0
         version: 5.5.5
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.5
+        version: 2.1.9(@types/node@22.20.4)
+
+  packages/mcp:
+    dependencies:
+      '@dsvault/a11y':
+        specifier: workspace:*
+        version: link:../a11y
+      '@dsvault/converters':
+        specifier: workspace:*
+        version: link:../converters
+      '@dsvault/schema':
+        specifier: workspace:*
+        version: link:../schema
+    devDependencies:
       typescript:
         specifier: ^5.6.3
         version: 5.9.3

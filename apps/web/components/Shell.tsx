@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { MenuIcon, PlusIcon } from './icons';
 
-export type NavSystem = { id: string; name: string; brand: string | null };
+export type NavSystem = { id: string; name: string; brand: string | null; shared: boolean };
 
 export const SYSTEM_SECTIONS = [
   { slug: '', title: 'Overview' },
@@ -57,14 +57,15 @@ export function Shell({ systems, email, signOut, children }: { systems: NavSyste
         <nav aria-labelledby="nav-systems" className="flex flex-col gap-0.5">
           <span id="nav-systems" className="label px-2 pb-2">Systems</span>
           <Link href="/" className="nav-link" aria-current={pathname === '/' ? 'page' : undefined}><span className="t">All systems</span></Link>
-          {systems.map((s) => (
-            <Link key={s.id} href={`/systems/${s.id}`} className="nav-link" aria-current={s.id === current ? 'page' : undefined}>
-              <span className="chip" style={{ background: s.brand ?? 'transparent' }} aria-hidden />
-              <span className="t">{s.name || 'Untitled system'}</span>
-            </Link>
-          ))}
+          {systems.filter((s) => !s.shared).map((s) => <SystemLink key={s.id} s={s} current={current} />)}
           <button type="button" className="add ml-0" onClick={newSystem} disabled={creating}><PlusIcon />{creating ? 'Creating…' : 'New system'}</button>
         </nav>
+        {systems.some((s) => s.shared) && (
+          <nav aria-labelledby="nav-shared" className="flex flex-col gap-0.5">
+            <span id="nav-shared" className="label px-2 pb-2">Shared with me</span>
+            {systems.filter((s) => s.shared).map((s) => <SystemLink key={s.id} s={s} current={current} />)}
+          </nav>
+        )}
         {current && (
           <nav aria-labelledby="nav-sections" className="flex flex-col gap-0.5">
             <span id="nav-sections" className="label px-2 pb-2">This system</span>
@@ -96,5 +97,14 @@ export function Shell({ systems, email, signOut, children }: { systems: NavSyste
         <main className="mx-auto max-w-[1040px] px-4 pb-24 pt-6 md:px-12">{children}</main>
       </div>
     </div>
+  );
+}
+
+function SystemLink({ s, current }: { s: NavSystem; current: string | null }) {
+  return (
+    <Link href={`/systems/${s.id}`} className="nav-link" aria-current={s.id === current ? 'page' : undefined}>
+      <span className="chip" style={{ background: s.brand ?? 'transparent' }} aria-hidden />
+      <span className="t">{s.name || 'Untitled system'}</span>
+    </Link>
   );
 }

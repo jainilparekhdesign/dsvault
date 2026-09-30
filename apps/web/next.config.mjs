@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@dsvault/schema', '@dsvault/converters', '@dsvault/a11y'],
+  transpilePackages: ['@dsvault/schema', '@dsvault/converters', '@dsvault/a11y', '@dsvault/mcp'],
   // Plugins (Figma, Framer) call the API from sandboxed iframes with a bearer
   // token. Cookies are never sent cross-origin with "*", so sessions stay safe.
   async headers() {

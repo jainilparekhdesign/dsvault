@@ -1,12 +1,15 @@
 'use client';
 
 import { type SystemContent, systemContent } from '@dsvault/schema';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 type SaveState = 'saved' | 'saving' | 'error';
+type Role = 'owner' | 'editor' | 'viewer';
 type Ctx = {
   id: string;
+  role: Role;
+  readOnly: boolean;
   content: SystemContent;
   update: (fn: (draft: SystemContent) => void) => void;
   replace: (next: SystemContent) => void;
@@ -26,7 +29,8 @@ export function useSystem() {
 
 const SAVE_DELAY = 600;
 
-export function SystemProvider({ id, initial, children }: { id: string; initial: SystemContent; children: React.ReactNode }) {
+export function SystemProvider({ id, initial, role = 'owner', children }: { id: string; initial: SystemContent; role?: Role; children: React.ReactNode }) {
+  const readOnly = role === 'viewer';
   const router = useRouter();
   const [content, setContent] = useState(initial);
   const [save, setSave] = useState<SaveState>('saved');
@@ -54,18 +58,20 @@ export function SystemProvider({ id, initial, children }: { id: string; initial:
   }, [persist]);
 
   const update = useCallback((fn: (draft: SystemContent) => void) => {
+    if (readOnly) return;
     const next = structuredClone(latest.current);
     fn(next);
     latest.current = next;
     setContent(next);
     schedule();
-  }, [schedule]);
+  }, [schedule, readOnly]);
 
   const replace = useCallback((next: SystemContent) => {
+    if (readOnly) return;
     latest.current = systemContent.parse(next);
     setContent(latest.current);
     schedule();
-  }, [schedule]);
+  }, [schedule, readOnly]);
 
   const reset = useCallback((next: SystemContent) => {
     if (timer.current) { clearTimeout(timer.current); timer.current = null; }
@@ -86,15 +92,29 @@ export function SystemProvider({ id, initial, children }: { id: string; initial:
     return () => { window.removeEventListener('pagehide', flush); if (timer.current) { clearTimeout(timer.current); void persist(); } };
   }, [id, persist]);
 
-  return <SystemCtx.Provider value={{ id, content, update, replace, reset, save, saveNow }}>{children}</SystemCtx.Provider>;
+  return <SystemCtx.Provider value={{ id, role, readOnly, content, update, replace, reset, save, saveNow }}>{children}</SystemCtx.Provider>;
 }
 
 export function SaveStatus() {
-  const { save } = useSystem();
+  const { save, readOnly } = useSystem();
+  if (readOnly) return <p className="label m-0 inline-flex items-center gap-2 whitespace-nowrap"><span className="status-dot" />View only</p>;
   const text = save === 'saved' ? 'Saved' : save === 'saving' ? 'Saving' : 'Not saved. Retrying on your next edit';
   return (
     <p className="label m-0 inline-flex items-center gap-2 whitespace-nowrap" aria-live="polite">
       <span className="status-dot" data-state={save} />{text}
     </p>
+  );
+}
+
+/** Viewers see every page with its controls disabled, except export, which stays usable. */
+export function ReadOnlyGate({ children }: { children: React.ReactNode }) {
+  const { readOnly, id } = useSystem();
+  const path = usePathname();
+  if (!readOnly || path === `/systems/${id}/export`) return <>{children}</>;
+  return (
+    <>
+      <p className="mb-6 rounded-sm border border-line-strong px-4 py-3 text-sm" role="note">This system was shared with you to view. You can browse and export it, but not change it.</p>
+      <fieldset disabled className="m-0 min-w-0 border-0 p-0">{children}</fieldset>
+    </>
   );
 }

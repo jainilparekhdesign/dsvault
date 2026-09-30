@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     await signOut({ redirectTo: '/sign-in' });
   }
   return (
-    <Shell email={owner} signOut={doSignOut} systems={systems.map((s) => ({ id: s.id, name: s.name, brand: brandColor(s.content) }))}>
+    <Shell email={owner} signOut={doSignOut} systems={systems.map((s) => ({ id: s.id, name: s.name, brand: brandColor(s.content), shared: s.role !== 'owner' }))}>
       {children}
     </Shell>
   );
