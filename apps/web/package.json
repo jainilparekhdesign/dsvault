@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/copy-axe.mjs && next dev",
+    "build": "node scripts/copy-axe.mjs && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "db:generate": "dotenv -e .env.local -- drizzle-kit generate",
@@ -18,6 +18,7 @@
     "@dsvault/schema": "workspace:*",
     "@neondatabase/serverless": "^0.10.4",
     "@vercel/blob": "^0.27.0",
+    "axe-core": "^4.10.2",
     "drizzle-orm": "^0.36.4",
     "geist": "^1.3.1",
     "nanoid": "^5.0.9",

@@ -1,12 +1,12 @@
 import type { SystemContent } from '@dsvault/schema';
-import { type ExportFile, type ImportResult, finish, fontStack, firstFamily, idFor, ms, px, uniqueNames } from './util';
+import { type TextFile, type ImportResult, finish, fontStack, firstFamily, idFor, ms, px, uniqueNames } from './util';
 
 // CSS custom properties. Colors: light on :root, dark under
 // prefers-color-scheme (guarded by data-theme) and again under
 // [data-theme="dark"]. Type styles become classes. Durations get a
 // prefers-reduced-motion block.
 
-export function exportCSS(c: SystemContent): ExportFile {
+export function exportCSS(c: SystemContent): TextFile {
   const t = c.tokens;
   const cn = uniqueNames(t.colors), sn = uniqueNames(t.spacing), rn = uniqueNames(t.radius), bn = uniqueNames(t.breakpoints);
   const zn = uniqueNames(t.zIndex), dn = uniqueNames(t.durations), en = uniqueNames(t.easings), shn = uniqueNames(t.shadows), tn = uniqueNames(t.type);

@@ -61,8 +61,8 @@ export function SwatchField({ theme, value, name, onChange }: { theme: string; v
 
 export const uid = () => Math.random().toString(36).slice(2, 10);
 
-export function download(filename: string, text: string, mime: string) {
-  const url = URL.createObjectURL(new Blob([text], { type: mime }));
+export function download(filename: string, data: string | Uint8Array, mime: string) {
+  const url = URL.createObjectURL(new Blob([data as BlobPart], { type: mime }));
   const a = Object.assign(document.createElement('a'), { href: url, download: filename });
   document.body.append(a);
   a.click();

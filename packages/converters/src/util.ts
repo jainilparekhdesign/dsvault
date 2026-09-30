@@ -1,7 +1,9 @@
 import { type SystemContent, type TokenSet, emptySystem, systemContent } from '@dsvault/schema';
 
 export type ImportResult = { content: SystemContent; warnings: string[] };
-export type ExportFile = { filename: string; mime: string; text: string };
+/** A generated file: text, or bytes for binary formats such as .sketch. */
+export type ExportFile = { filename: string; mime: string; text?: string; bytes?: Uint8Array };
+export type TextFile = ExportFile & { text: string };
 
 /** A CSS-safe token name. */
 export function slug(s: string): string {

@@ -11,6 +11,7 @@ export const SYSTEM_SECTIONS = [
   { slug: '', title: 'Overview' },
   { slug: 'tokens', title: 'Tokens' },
   { slug: 'brand', title: 'Brand book' },
+  { slug: 'components', title: 'Components' },
   { slug: 'checklist', title: 'Checklist' },
   { slug: 'accessibility', title: 'Accessibility' },
   { slug: 'versions', title: 'Versions' },
@@ -69,7 +70,8 @@ export function Shell({ systems, email, signOut, children }: { systems: NavSyste
             <span id="nav-sections" className="label px-2 pb-2">This system</span>
             {SYSTEM_SECTIONS.map((s) => {
               const href = `/systems/${current}${s.slug ? `/${s.slug}` : ''}`;
-              return <Link key={s.slug} href={href} className="nav-link nav-sub" aria-current={pathname === href ? 'page' : undefined}><span className="t">{s.title}</span></Link>;
+              const here = pathname === href || (s.slug === 'components' && pathname.startsWith(`${href}/`));
+              return <Link key={s.slug} href={href} className="nav-link nav-sub" aria-current={here ? 'page' : undefined}><span className="t">{s.title}</span></Link>;
             })}
           </nav>
         )}

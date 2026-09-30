@@ -1,14 +1,14 @@
 import { THEMES, type SystemContent } from '@dsvault/schema';
 import { a11yReport } from '@dsvault/a11y';
 import { brandBookMarkdown } from './claude-design';
-import { type ExportFile, fontStack, uniqueNames } from './util';
+import { type TextFile, fontStack, uniqueNames } from './util';
 
 // One markdown file an AI design tool can read in a prompt: the brand book,
 // every token, and the rules the tokens imply.
 
 const row = (cells: (string | number)[]) => `| ${cells.map((c) => String(c).replace(/\|/g, '\\|')).join(' | ')} |`;
 
-export function exportMarkdownPack(c: SystemContent): ExportFile {
+export function exportMarkdownPack(c: SystemContent): TextFile {
   const t = c.tokens;
   const out: string[] = [brandBookMarkdown(c).trimEnd(), '', '---', '', '# Tokens', ''];
   const cn = uniqueNames(t.colors);

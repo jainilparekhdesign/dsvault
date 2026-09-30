@@ -20,7 +20,8 @@ export type AutoCheck =
   | 'z-index'
   | 'easings'
   | 'durations'
-  | 'reduced-motion';
+  | 'reduced-motion'
+  | 'component';
 
 export type ChecklistItem = {
   key: string;
@@ -153,7 +154,7 @@ export const CHECKLIST: ChecklistSection[] = [
       {
         key: 'library',
         title: 'Component library',
-        items: COMPONENTS.map((c) => item(`components.${componentSlug(c)}`, c, 'Designed, built, documented and checked with a keyboard and a screen reader.')),
+        items: COMPONENTS.map((c) => item(`components.${componentSlug(c)}`, c, 'Has a live preview with no axe issues in either theme, and every keyboard, screen-reader and component check ticked.', { auto: 'component', brandKey: c })),
       },
     ],
   },

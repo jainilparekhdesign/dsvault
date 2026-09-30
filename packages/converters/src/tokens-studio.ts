@@ -1,5 +1,5 @@
 import type { SystemContent } from '@dsvault/schema';
-import { type ExportFile, type ImportResult, finish, idFor, ms, px, uniqueNames } from './util';
+import { type TextFile, type ImportResult, finish, idFor, ms, px, uniqueNames } from './util';
 
 // Tokens Studio for Figma, multi-file JSON: a "global" set plus one set per
 // theme, with $themes and $metadata. Roles, pairs, ids and reduced-motion
@@ -40,7 +40,7 @@ export function toTokensStudio(c: SystemContent): Record<string, any> {
   };
 }
 
-export function exportTokensStudio(c: SystemContent): ExportFile {
+export function exportTokensStudio(c: SystemContent): TextFile {
   return { filename: 'tokens-studio.json', mime: 'application/json', text: JSON.stringify(toTokensStudio(c), null, 2) + '\n' };
 }
 

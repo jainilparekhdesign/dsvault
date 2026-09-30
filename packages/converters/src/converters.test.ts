@@ -120,16 +120,16 @@ describe('Markdown pack and registry', () => {
     expect(md).toContain('# Rules');
     expect(md).toContain('`graphite` on `paper`');
   });
-  it('every export runs', () => {
-    for (const f of EXPORTS) expect(f.run(fullSystem()).every((file) => file.text.length > 0)).toBe(true);
+  it('every export runs', async () => {
+    for (const f of EXPORTS) expect((await f.run(fullSystem())).every((file) => (file.text?.length ?? file.bytes?.length ?? 0) > 0)).toBe(true);
   });
-  it('detects formats', () => {
+  it('detects formats', async () => {
     const s = fullSystem();
-    expect(importAny('tokens.json', exportDTCG(s).text).kind).toBe('dtcg');
-    expect(importAny('t.json', exportTokensStudio(s).text).kind).toBe('tokens-studio');
-    expect(importAny('tokens.json', exportClaudeDesign(s)[1]!.text).kind).toBe('claude-design');
-    expect(importAny('tokens.css', exportCSS(s).text).kind).toBe('css');
-    expect(importAny('tailwind.config.js', exportTailwind(s).text).kind).toBe('tailwind');
-    expect(() => importAny('x.json', '{"a":1}')).toThrow();
+    expect((await importAny('tokens.json', exportDTCG(s).text!)).kind).toBe('dtcg');
+    expect((await importAny('t.json', exportTokensStudio(s).text!)).kind).toBe('tokens-studio');
+    expect((await importAny('tokens.json', exportClaudeDesign(s)[1]!.text!)).kind).toBe('claude-design');
+    expect((await importAny('tokens.css', exportCSS(s).text!)).kind).toBe('css');
+    expect((await importAny('tailwind.config.js', exportTailwind(s).text!)).kind).toBe('tailwind');
+    await expect(importAny('x.json', '{"a":1}')).rejects.toThrow();
   });
 });

@@ -1,5 +1,5 @@
 import type { SystemContent } from '@dsvault/schema';
-import { type ExportFile, type ImportResult, finish, idFor, ms, px, uniqueNames } from './util';
+import { type TextFile, type ImportResult, finish, idFor, ms, px, uniqueNames } from './util';
 
 // W3C Design Tokens Community Group format. Light values are the $value;
 // dark values, roles and ids ride in $extensions["com.dsvault"].
@@ -39,11 +39,11 @@ export function toDTCG(c: SystemContent): Record<string, any> {
     $value: { fontFamily: x.family, fontSize: `${x.size}px`, lineHeight: `${x.lineHeight}px`, fontWeight: x.weight, ...(x.letterSpacing ? { letterSpacing: x.letterSpacing } : {}) },
     $extensions: { [EXT]: { sample: x.sample } },
   }));
-  out.$extensions = { [EXT]: { description: c.description, pairs: t.pairs, brand: c.brand, checklist: c.checklist } };
+  out.$extensions = { [EXT]: { description: c.description, pairs: t.pairs, brand: c.brand, checklist: c.checklist, components: c.components } };
   return out;
 }
 
-export function exportDTCG(c: SystemContent): ExportFile {
+export function exportDTCG(c: SystemContent): TextFile {
   return { filename: 'tokens.json', mime: 'application/json', text: JSON.stringify(toDTCG(c), null, 2) + '\n' };
 }
 
@@ -102,6 +102,7 @@ export function importDTCG(json: Record<string, any>): ImportResult {
     description: meta.description ?? '',
     brand: meta.brand ?? {},
     checklist: meta.checklist ?? {},
+    components: meta.components ?? [],
     tokens: { colors, type, spacing: dims('space', 'spacing'), radius: dims('radius', 'radius'), breakpoints: dims('bp', 'breakpoint'), zIndex, shadows, durations, easings, pairs: meta.pairs ?? [] },
   }, warnings);
 }

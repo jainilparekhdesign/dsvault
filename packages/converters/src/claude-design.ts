@@ -1,5 +1,5 @@
 import { BRAND_SECTIONS, THEMES, type SystemContent } from '@dsvault/schema';
-import { type ExportFile, type ImportResult, finish, firstFamily, fontStack, idFor, ms, px, uniqueNames } from './util';
+import { type TextFile, type ImportResult, finish, firstFamily, fontStack, idFor, ms, px, uniqueNames } from './util';
 
 // Claude Design "Design System" artifact: README.md (the brand book) plus
 // tokens.json, where every family is a list of {name, value, usage} and
@@ -60,7 +60,7 @@ export function brandBookMarkdown(c: SystemContent): string {
   return lines.join('\n').trimEnd() + '\n';
 }
 
-export function exportClaudeDesign(c: SystemContent): ExportFile[] {
+export function exportClaudeDesign(c: SystemContent): TextFile[] {
   return [
     { filename: 'README.md', mime: 'text/markdown', text: brandBookMarkdown(c) },
     { filename: 'tokens.json', mime: 'application/json', text: JSON.stringify(toClaudeTokens(c), null, 2) + '\n' },

@@ -1,8 +1,8 @@
 'use client';
 
-import { EXPORTS } from '@dsvault/converters';
+import { EXPORTS, type ExportFile } from '@dsvault/converters';
 import type { SystemContent } from '@dsvault/schema';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSystem } from './SystemProvider';
 import { Block, PageHead, download } from './ui';
 
@@ -16,17 +16,24 @@ export function ExportView() {
   const [parsed, setParsed] = useState<Parsed | null>(null);
   const [importNote, setImportNote] = useState('');
   const format = EXPORTS.find((f) => f.id === fmt)!;
-  const files = useMemo(() => format.run(content), [format, content]);
-  const file = files[Math.min(fileIdx, files.length - 1)]!;
+  const [files, setFiles] = useState<ExportFile[]>([]);
+  useEffect(() => {
+    let live = true;
+    Promise.resolve(format.run(content)).then((f) => { if (live) setFiles(f); });
+    return () => { live = false; };
+  }, [format, content]);
+  const file = files[Math.min(fileIdx, files.length - 1)];
 
   async function copy() {
+    if (!file?.text) return;
     try { await navigator.clipboard.writeText(file.text); setNote(`Copied ${file.filename}.`); }
     catch { setNote('Couldn’t copy. Select the text and copy it instead.'); }
   }
 
   async function read(f: File) {
     setImportNote(`Reading ${f.name}…`); setParsed(null);
-    const res = await fetch('/api/import', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ filename: f.name, text: await f.text() }) });
+    const body64 = /\.sketch$/i.test(f.name) ? { base64: await toBase64(f) } : { text: await f.text() };
+    const res = await fetch('/api/import', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ filename: f.name, ...body64 }) });
     const body = await res.json().catch(() => ({}));
     if (!res.ok) { setImportNote(body.error ?? 'Couldn’t read that file.'); return; }
     setParsed({ ...body, filename: f.name });
@@ -52,25 +59,29 @@ export function ExportView() {
         <div className="tabs" role="tablist" aria-label="Format">
           {EXPORTS.map((f) => <button key={f.id} type="button" role="tab" aria-selected={f.id === fmt} onClick={() => { setFmt(f.id); setFileIdx(0); setNote(''); }}>{f.label}</button>)}
         </div>
-        {files.length > 1 && (
+        {files.length > 1 && file && (
           <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="File">
             {files.map((x, i) => <button key={x.filename} type="button" className="btn h-8 px-2.5 text-[13px]" aria-pressed={i === fileIdx} style={i === fileIdx ? { borderColor: 'var(--forest)', color: 'var(--forest)' } : undefined} onClick={() => setFileIdx(i)}>{x.filename}</button>)}
           </div>
         )}
-        <pre className="code mt-3" tabIndex={0} aria-label={`${file.filename} preview`}>{file.text}</pre>
+        {!file ? <p className="note mt-3">Preparing…</p> : file.text != null ? (
+          <pre className="code mt-3" tabIndex={0} aria-label={`${file.filename} preview`}>{file.text}</pre>
+        ) : (
+          <p className="mt-3 rounded-sm border border-line p-4"><span className="mono">{file.filename}</span> <span className="note">· {Math.ceil((file.bytes?.length ?? 0) / 1024)} KB · a binary file, so there’s no preview</span></p>
+        )}
         <div className="actions mt-3">
-          <button type="button" className="btn btn-primary" onClick={copy}>Copy</button>
-          <button type="button" className="btn" onClick={() => { files.forEach((x) => download(x.filename, x.text, x.mime)); setNote(`Downloaded ${files.map((x) => x.filename).join(' and ')}.`); }}>
-            Download {files.length > 1 ? 'both files' : file.filename}
+          {file?.text != null && <button type="button" className="btn btn-primary" onClick={copy}>Copy</button>}
+          <button type="button" className={`btn ${file?.text == null ? 'btn-primary' : ''}`} disabled={!file} onClick={() => { files.forEach((x) => download(x.filename, x.bytes ?? x.text ?? '', x.mime)); setNote(`Downloaded ${files.map((x) => x.filename).join(', ')}.`); }}>
+            Download {files.length > 1 ? `${files.length} files` : file?.filename ?? ''}
           </button>
           <span className="note" aria-live="polite">{note}</span>
         </div>
       </Block>
-      <Block title="Import" intro="W3C tokens, Tokens Studio, a Claude Design tokens.json, a CSS file or a Tailwind config. Replaces this system’s tokens; the name and checklist stay.">
+      <Block title="Import" intro="W3C tokens, Tokens Studio, Penpot, a Claude Design tokens.json, CSS, a Tailwind config or a .sketch file. Replaces this system’s tokens; the name and checklist stay.">
         <div className="actions">
           <label className="btn">
             Choose a file
-            <input type="file" className="sr-only" accept=".json,.css,.js,.cjs,.mjs,.ts" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void read(f); }} />
+            <input type="file" className="sr-only" accept=".json,.css,.js,.cjs,.mjs,.ts,.sketch" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void read(f); }} />
           </label>
           <span className="note" aria-live="polite">{importNote}</span>
         </div>
@@ -92,4 +103,11 @@ export function ExportView() {
       </Block>
     </>
   );
+}
+
+async function toBase64(f: File) {
+  const buf = new Uint8Array(await f.arrayBuffer());
+  let s = '';
+  for (let i = 0; i < buf.length; i += 0x8000) s += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+  return btoa(s);
 }

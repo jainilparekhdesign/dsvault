@@ -1,4 +1,4 @@
-import { ALL_ITEMS, type AutoCheck, type ChecklistItem, type SystemContent } from '@dsvault/schema';
+import { ALL_ITEMS, type AutoCheck, type ChecklistItem, type SystemContent, componentDone, criteriaFor } from '@dsvault/schema';
 import { normalizeHex } from './color';
 import { type A11yReport, a11yReport } from './report';
 
@@ -67,6 +67,14 @@ function autoCheck(check: AutoCheck, item: ChecklistItem, c: SystemContent, r: A
       return res(t.easings.length >= 1, `${t.easings.length} easings.`);
     case 'durations':
       return res(t.durations.length >= 2, `${t.durations.length} durations.`);
+    case 'component': {
+      const comp = c.components.find((x) => x.kind === item.brandKey);
+      if (!comp) return res(false, 'Not added yet.');
+      if (componentDone(comp)) return res(true, 'Preview, axe and all checks done.');
+      const left = criteriaFor(comp.kind).filter((k) => !comp.checks[k.key]).length;
+      const axe = comp.axe == null ? 'not run' : comp.axe.light === 0 && comp.axe.dark === 0 ? 'clean' : `${(comp.axe.light ?? 0) + (comp.axe.dark ?? 0)} issues`;
+      return res(false, `${comp.html.trim() ? '' : 'No preview. '}Axe ${axe}; ${left} checks open.`);
+    }
     case 'reduced-motion':
       return res(t.durations.length > 0 && r.motion.length === 0, t.durations.length ? (r.motion.length ? `${r.motion.length} durations lack a reduced value.` : 'Every duration has a reduced value.') : 'Add durations first.');
   }
