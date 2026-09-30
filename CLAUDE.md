@@ -15,7 +15,7 @@ Product name: **Design System Vault** (short form "DS Vault", package scope `@ds
 | Companions | Web app and Figma plugin are both first-class. Framer plugin later. |
 | Checklist | Follow the structure of designsystemchecklist.com (listed below). Its repo has no license, so write our own wording for every item; copy structure, not text. |
 | Accessibility | Built-in checkers for tokens, components and the Figma canvas (see below). |
-| Start | Phase 1 plan approved 2026-09-30 (milestones M0 scaffold to M9 seed and verify). |
+| Start | Phase 1 (M0–M9) built and live on 2026-09-30. Next: Phase 2, the Figma plugin. |
 
 ## Stack
 
@@ -56,6 +56,14 @@ Each system shows a checklist score. Items the app can verify are ticked automat
 | Token formats | W3C DTCG, Tokens Studio, Style Dictionary, CSS custom properties, Tailwind config. |
 | Claude Design | Export as a Design System artifact: `README.md` brand book plus `tokens.json` (lists of `{name, value, usage}`, per-theme color values). Reference example: https://claude.ai/artifact/2uuLSfqRoy79zvnqDeXgZp |
 | Figma Make, Paper, Gemini, other AI tools | Most have no import API. Export a prompt-ready markdown pack (brand book, tokens, rules) and expose systems through the MCP server. Verify each tool's current import options before building its exporter. |
+
+## How phase 1 is built
+
+- A system's content (tokens, brand book, manual checklist ticks) is one zod-validated JSON document (`SystemContent` in `packages/schema`), stored in `systems.content`. Versions snapshot it whole; `diffContent` compares two. Themes are fixed to light and dark for now.
+- The checklist structure lives in `packages/schema/src/checklist.ts` (our own wording). Auto items are computed by `evaluateChecklist` in `packages/a11y`; only manual ticks are stored.
+- The web app autosaves through `PUT /api/systems/:id` (600 ms debounce). Other routes: versions, restore, import, Blob upload. All check the signed-in owner.
+- Commands: `pnpm test` (vitest in packages), `pnpm typecheck`, `pnpm --filter @dsvault/web db:generate|db:migrate`, `pnpm --filter @dsvault/web seed:portfolio`. Local env comes from `vercel env pull` into the root `.env.local` (symlinked into apps/web); development and production share one Neon database.
+- pnpm isn't installed globally on Jainil's Mac; use `corepack pnpm`.
 
 ## Phases
 

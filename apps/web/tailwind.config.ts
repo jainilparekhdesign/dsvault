@@ -2,7 +2,7 @@ import type { Config } from 'tailwindcss';
 
 // Names match the tokens in styles/tokens.css. There are no other colors.
 const config: Config = {
-  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './lib/**/*.{ts,tsx}'],
   theme: {
     colors: {
       transparent: 'transparent',
