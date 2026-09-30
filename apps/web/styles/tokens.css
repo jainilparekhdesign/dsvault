@@ -1,0 +1,59 @@
+/*
+  Design tokens. Same palette as the Jainil Portfolio system (by Jainil's choice); values recorded in CLAUDE.md.
+  Light values on :root; dark values follow the OS unless data-theme forces one.
+*/
+:root {
+  --paper: #f5f6f3;
+  --surface: #eceee9;
+  --line: #d3d7d0;
+  --line-strong: #7c837d;
+  --graphite: #1f2321;
+  --graphite-muted: #5a615c;
+  --forest: #2f5d46;
+  --on-forest: #f5f6f3;
+  --forest-tint: #dce6df;
+  --rust: #b4532a;
+
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --dur-state: 150ms;
+  --dur-panel: 250ms;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #141715;
+    --surface: #1c201e;
+    --line: #2e3431;
+    --line-strong: #6b736d;
+    --graphite: #e6e9e4;
+    --graphite-muted: #9ba39d;
+    --forest: #7fb394;
+    --on-forest: #141715;
+    --forest-tint: #1f3128;
+    --rust: #d9774c;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --paper: #141715;
+  --surface: #1c201e;
+  --line: #2e3431;
+  --line-strong: #6b736d;
+  --graphite: #e6e9e4;
+  --graphite-muted: #9ba39d;
+  --forest: #7fb394;
+  --on-forest: #141715;
+  --forest-tint: #1f3128;
+  --rust: #d9774c;
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-state: 0ms;
+    --dur-panel: 0ms;
+  }
+}
