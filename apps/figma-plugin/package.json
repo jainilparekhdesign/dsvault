@@ -1,0 +1,21 @@
+{
+  "name": "@dsvault/figma-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@dsvault/a11y": "workspace:*",
+    "@dsvault/schema": "workspace:*"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.106.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
+  }
+}

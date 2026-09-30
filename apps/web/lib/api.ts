@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 import { currentOwner } from './owner';
+import { ownerForToken } from './tokens';
 
 type Handler<P> = (owner: string, req: Request, ctx: { params: P }) => Promise<Response>;
 
-/** Wraps a route handler: 401 when signed out, 400 on validation errors. */
+/** Wraps a route handler: accepts a session or a personal access token; 401 when neither, 400 on validation errors. */
 export function withOwner<P = Record<string, string>>(fn: Handler<P>) {
   return async (req: Request, ctx: { params: P }) => {
-    const owner = await currentOwner();
-    if (!owner) return NextResponse.json({ error: 'Sign in first.' }, { status: 401 });
+    const bearer = req.headers.get('authorization')?.match(/^Bearer\s+(\S+)$/i)?.[1];
+    const owner = bearer ? await ownerForToken(bearer) : await currentOwner();
+    if (!owner) return NextResponse.json({ error: bearer ? 'That access token isn’t valid. Create a new one in Settings.' : 'Sign in first.' }, { status: 401 });
     try {
       return await fn(owner, req, ctx);
     } catch (err) {

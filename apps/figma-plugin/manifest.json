@@ -1,0 +1,14 @@
+{
+  "name": "Design System Vault",
+  "id": "dsvault-figma-dev",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["https://designsystemvault.xyz", "https://dsvault-ten.vercel.app"],
+    "devAllowedDomains": ["http://localhost:3000"],
+    "reasoning": "Reads and saves design systems in the user's own Design System Vault."
+  }
+}

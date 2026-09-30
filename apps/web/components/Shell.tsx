@@ -73,7 +73,10 @@ export function Shell({ systems, email, signOut, children }: { systems: NavSyste
             })}
           </nav>
         )}
-        <form action={signOut} className="mt-auto flex flex-col gap-2 px-2">
+        <nav aria-label="Account" className="mt-auto flex flex-col gap-0.5">
+          <Link href="/settings" className="nav-link nav-sub" aria-current={pathname === '/settings' ? 'page' : undefined}><span className="t">Settings and tokens</span></Link>
+        </nav>
+        <form action={signOut} className="flex flex-col gap-2 px-2">
           <span className="mono truncate text-xs text-graphite-muted">{email}</span>
           <button type="submit" className="btn self-start">Sign out</button>
         </form>

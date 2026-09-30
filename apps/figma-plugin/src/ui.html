@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  /* Figma supplies theme colors (themeColors: true), so the plugin follows light and dark. */
+  :root { --r: 6px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 12px/18px system-ui, -apple-system, 'Segoe UI', sans-serif; background: var(--figma-color-bg); color: var(--figma-color-text); }
+  main { padding: 12px 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+  h1 { font-size: 13px; font-weight: 600; margin: 0; }
+  h2 { font-size: 11px; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: .06em; color: var(--figma-color-text-secondary); }
+  p { margin: 0; }
+  .muted { color: var(--figma-color-text-secondary); }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+  label { display: flex; flex-direction: column; gap: 4px; }
+  input, select { font: inherit; color: inherit; height: 28px; padding: 0 8px; border: 1px solid var(--figma-color-border); border-radius: var(--r); background: var(--figma-color-bg); width: 100%; }
+  input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--figma-color-border-brand-strong, var(--figma-color-bg-brand)); outline-offset: 1px; }
+  button { font: inherit; font-weight: 500; height: 28px; padding: 0 12px; border-radius: var(--r); border: 1px solid var(--figma-color-border-strong, var(--figma-color-border)); background: none; color: inherit; cursor: pointer; }
+  button.primary { background: var(--figma-color-bg-brand); border-color: var(--figma-color-bg-brand); color: var(--figma-color-text-onbrand); }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--figma-color-border); }
+  .tabs button { border: 0; border-bottom: 2px solid transparent; border-radius: 0; color: var(--figma-color-text-secondary); padding: 0 10px; }
+  .tabs button[aria-selected="true"] { color: var(--figma-color-text); border-bottom-color: var(--figma-color-bg-brand); }
+  .list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--figma-color-border); max-height: 300px; overflow: auto; }
+  .list li { display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--figma-color-border); align-items: baseline; }
+  .sign { font-family: ui-monospace, Menlo, monospace; }
+  .ok { color: var(--figma-color-text-success); font-weight: 600; }
+  .bad { color: var(--figma-color-text-danger); font-weight: 600; }
+  .chip { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--figma-color-border); vertical-align: -2px; }
+  .box { border: 1px solid var(--figma-color-border); border-radius: var(--r); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main id="app">
+  <header class="row" style="justify-content: space-between">
+    <h1>Design System Vault</h1>
+    <button id="edit-conn" type="button" hidden>Connection</button>
+  </header>
+
+  <section id="connect" class="box" hidden>
+    <h2>Connect</h2>
+    <p class="muted">Create a token in the vault under Settings and tokens, then paste it here.</p>
+    <label>Server<input id="server" value="https://designsystemvault.xyz" spellcheck="false" /></label>
+    <label>Access token<input id="token" type="password" placeholder="dsv_…" spellcheck="false" /></label>
+    <div class="row"><button id="connect-btn" class="primary" type="button">Connect</button><span id="connect-note" class="muted" aria-live="polite"></span></div>
+  </section>
+
+  <section id="work" hidden>
+    <label>System<select id="system"></select></label>
+    <div class="tabs" role="tablist" style="margin-top: 12px">
+      <button type="button" role="tab" data-tab="pull" aria-selected="true">Vault → Figma</button>
+      <button type="button" role="tab" data-tab="push" aria-selected="false">Figma → Vault</button>
+      <button type="button" role="tab" data-tab="contrast" aria-selected="false">Contrast</button>
+    </div>
+
+    <div data-panel="pull" style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+      <p class="muted">Creates or updates a variable collection with Light and Dark modes, text styles and effect styles. Only things the vault made are ever removed.</p>
+      <div class="row"><button id="preview-pull" type="button">Preview changes</button></div>
+      <div id="pull-out"></div>
+    </div>
+
+    <div data-panel="push" hidden style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+      <p class="muted">Reads this file’s variables and styles for the system and shows what would change in the vault.</p>
+      <label style="flex-direction:row;align-items:center;gap:6px"><input id="remove-missing" type="checkbox" style="width:auto;height:auto" /> Also remove tokens that aren’t in Figma</label>
+      <div class="row"><button id="preview-push" type="button">Preview changes</button></div>
+      <div id="push-out"></div>
+    </div>
+
+    <div data-panel="contrast" hidden style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+      <p class="muted">Checks every text layer in the selection against the nearest solid fill behind it (WCAG 2.2: 4.5:1, or 3:1 for large text).</p>
+      <div class="row"><button id="check" type="button" class="primary">Check selection</button><span id="sel" class="muted"></span></div>
+      <div id="contrast-out"></div>
+    </div>
+  </section>
+  <p id="status" class="muted" role="status" aria-live="polite"></p>
+</main>
+<script>/*__UI_SCRIPT__*/</script>
+</body>
+</html>
