@@ -11,7 +11,7 @@ Product name: **Design System Vault** (short form "DS Vault", package scope `@ds
 | Topic | Decision |
 |---|---|
 | Users | Just Jainil now. Schema is multi-user ready (`ownerId` on every row). |
-| Hosting | Vercel, deployed from the first milestone. Postgres (Neon via Vercel) with Drizzle ORM. Vercel Blob for assets. Auth.js with Google, login restricted to jainilparekh.design@gmail.com. A hosted server is required because the Figma plugin syncs through its API. |
+| Hosting | Vercel project `dsvault` (team jainil1), auto-deploys from github.com/jainilparekhdesign/dsvault `main`, root `apps/web`. Domain designsystemvault.xyz (designsystemvalut.xyz and www redirect to it). Postgres (Neon via Vercel) with Drizzle ORM. Vercel Blob for assets. Auth.js with Google, login restricted to jainilparekh.design@gmail.com. A hosted server is required because the Figma plugin syncs through its API. |
 | Companions | Web app and Figma plugin are both first-class. Framer plugin later. |
 | Checklist | Follow the structure of designsystemchecklist.com (listed below). Its repo has no license, so write our own wording for every item; copy structure, not text. |
 | Accessibility | Built-in checkers for tokens, components and the Figma canvas (see below). |
