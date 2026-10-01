@@ -10,12 +10,12 @@ Product name: **Design System Vault** (short form "DS Vault", package scope `@ds
 
 | Topic | Decision |
 |---|---|
-| Users | Just Jainil now. Schema is multi-user ready (`ownerId` on every row). |
+| Users | Jainil plus invitees. Sign-in: ALLOWED_EMAILS / ALLOWED_EMAIL allowlist, or anyone a system is shared with. `ownerId` is the lowercased Google email. |
 | Hosting | Vercel project `dsvault` (team jainil1), auto-deploys from github.com/jainilparekhdesign/dsvault `main`, root `apps/web`. Domain designsystemvault.xyz (designsystemvalut.xyz and www redirect to it). Postgres (Neon via Vercel) with Drizzle ORM. Vercel Blob for assets. Auth.js with Google, login restricted to jainilparekh.design@gmail.com. A hosted server is required because the Figma plugin syncs through its API. |
 | Companions | Web app and Figma plugin are both first-class. Framer plugin later. |
 | Checklist | Follow the structure of designsystemchecklist.com (listed below). Its repo has no license, so write our own wording for every item; copy structure, not text. |
 | Accessibility | Built-in checkers for tokens, components and the Figma canvas (see below). |
-| Start | Phase 1 (M0–M9) built and live on 2026-09-30. Next: Phase 2, the Figma plugin. |
+| Status | Phases 1–4 built on 2026-09-30 (Jainil asked for all phases in one go). Web app live; plugins run in development mode. |
 
 ## Stack
 
@@ -64,6 +64,17 @@ Each system shows a checklist score. Items the app can verify are ticked automat
 - The web app autosaves through `PUT /api/systems/:id` (600 ms debounce). Other routes: versions, restore, import, Blob upload. All check the signed-in owner.
 - Commands: `pnpm test` (vitest in packages), `pnpm typecheck`, `pnpm --filter @dsvault/web db:generate|db:migrate`, `pnpm --filter @dsvault/web seed:portfolio`. Local env comes from `vercel env pull` into the root `.env.local` (symlinked into apps/web); development and production share one Neon database.
 - pnpm isn't installed globally on Jainil's Mac; use `corepack pnpm`.
+- Database reads must not be cached: the Neon driver runs over fetch, so `lib/db` passes `cache: 'no-store'`. Removing it serves stale rows (found when public links kept working after being turned off).
+
+## How phases 2–4 are built
+
+- Access tokens (`api_tokens`, SHA-256 hashed, shown once) authorize the plugins and MCP. API routes accept a bearer token or a session via `withOwner`; CORS is open on the API because bearer tokens, not cookies, carry auth. Tokens can't create tokens.
+- Figma plugin (`apps/figma-plugin`): `src/sync.ts` plans (tested), `src/figma-ops.ts` is the only code touching the document. Variables live in a collection named after the system with Light/Dark modes, scopes by color role, and `var(--name)` web code syntax. `node build.mjs --harness` builds the ops for running in a real file through the Figma MCP (`use_figma` forbids plugin data, so the harness swaps in an in-memory store).
+- Components: part of `SystemContent`. Previews render in sandboxed iframes (`allow-scripts` only) from `exportCSS` plus `--ds-*` role aliases; axe-core is served from `/axe.min.js` (copied at build) and reports by postMessage. Static files bypass the auth middleware because sandboxed frames send no cookies.
+- Converters added: Style Dictionary (tested with a real SD v5 build), Penpot (type names from Penpot's source: borderRadius, fontSizes, …), Sketch (validated against @sketch-hq/sketch-file-format schemas). `.sketch` files travel to /api/import as base64.
+- MCP: `packages/mcp` is transport-free (`handleMcp`); `/api/mcp` serves it statelessly over Streamable HTTP with JSON replies. Read-only tools only.
+- Sharing: `shares` table (viewer/editor by email) and `systems.public_token`. Every read and write goes through `getSystem`'s role check in `lib/systems.ts`; delete and sharing are owner-only; viewers get a disabled editor except Export. Public pages live at `/share/<token>` with downloads at `/api/share/<token>`.
+- Framer plugin (`apps/framer-plugin`): official template layout (Vite, vite-plugin-framer, mkcert). Settings live in localStorage, never Framer plugin data, so tokens aren't shared with collaborators.
 
 ## Phases
 
