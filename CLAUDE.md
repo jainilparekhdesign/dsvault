@@ -62,7 +62,7 @@ Each system shows a checklist score. Items the app can verify are ticked automat
 - A system's content (tokens, brand book, manual checklist ticks) is one zod-validated JSON document (`SystemContent` in `packages/schema`), stored in `systems.content`. Versions snapshot it whole; `diffContent` compares two. Themes are fixed to light and dark for now.
 - The checklist structure lives in `packages/schema/src/checklist.ts` (our own wording). Auto items are computed by `evaluateChecklist` in `packages/a11y`; only manual ticks are stored.
 - The web app autosaves through `PUT /api/systems/:id` (600 ms debounce). Other routes: versions, restore, import, Blob upload. All check the signed-in owner.
-- Commands: `pnpm test` (vitest in packages), `pnpm typecheck`, `pnpm --filter @dsvault/web db:generate|db:migrate`, `pnpm --filter @dsvault/web seed:portfolio`. Local env comes from `vercel env pull` into the root `.env.local` (symlinked into apps/web); development and production share one Neon database.
+- Commands: `pnpm test` (vitest in packages), `pnpm typecheck`, `pnpm --filter @dsvault/web db:generate|db:migrate`, `pnpm --filter @dsvault/web seed:portfolio`. Local env lives in the root `.env.local` (symlinked into apps/web); development and production share one Neon database. Database URLs, passwords and the Blob token are Sensitive in Vercel (since 2026-09-30), so `vercel env pull` returns them empty: keep the existing `.env.local`, or copy values from Neon and Blob dashboards.
 - pnpm isn't installed globally on Jainil's Mac; use `corepack pnpm`.
 - Database reads must not be cached: the Neon driver runs over fetch, so `lib/db` passes `cache: 'no-store'`. Removing it serves stale rows (found when public links kept working after being turned off).
 
